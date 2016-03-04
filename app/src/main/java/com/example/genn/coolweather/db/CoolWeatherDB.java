@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoolWeatherDB {
-    public static final String DB_NAME = "cool weather"; //数据库名字
+    public static final String DB_NAME = "cool_weather"; //数据库名字
     public static final int VERSION = 1;
 
     private static CoolWeatherDB coolWeatherDB;
@@ -24,7 +24,7 @@ public class CoolWeatherDB {
         db = dbHelper.getWritableDatabase();
     }
 
-    public synchronized CoolWeatherDB getInstance(Context context){
+    public synchronized static CoolWeatherDB getInstance(Context context){
         if (coolWeatherDB == null){
             coolWeatherDB = new CoolWeatherDB(context);
         }
@@ -110,6 +110,7 @@ public class CoolWeatherDB {
                 county.setCountyName(cursor.getString(cursor.getColumnIndex("county_name")));
                 county.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
                 county.setCityId(cityId);
+                list.add(county);
             }while (cursor.moveToNext());
         }
         if (cursor != null) {
