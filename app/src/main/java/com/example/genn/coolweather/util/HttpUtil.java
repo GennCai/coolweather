@@ -1,5 +1,12 @@
 package com.example.genn.coolweather.util;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +41,26 @@ public class HttpUtil {
                     if (connection != null) {
                         connection.disconnect();
                     }
+                }
+            }
+        }).start();
+    }
+
+    public static void sendHttpClientRequest(final String address, final HttpCallbackListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpGet httpGet = new HttpGet(address);
+                    HttpResponse httpResponse = httpClient.execute(httpGet);
+                    if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                        HttpEntity entity = httpResponse.getEntity();
+                        String response = EntityUtils.toString(entity, "utf-8");
+                        listener.onFinish(response);
+                    }
+                } catch (Exception e) {
+                    listener.onError(e);
                 }
             }
         }).start();

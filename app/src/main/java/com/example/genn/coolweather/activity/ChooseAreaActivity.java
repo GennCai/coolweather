@@ -1,8 +1,11 @@
 package com.example.genn.coolweather.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -49,32 +52,18 @@ public class ChooseAreaActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.choose_area);
-        titleText = (TextView) findViewById(R.id.title_text);
-        listView = (ListView) findViewById(R.id.list_view);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
-        listView.setAdapter(adapter);
-        coolWeatherDB = CoolWeatherDB.getInstance(this);
-        
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (currentLevel == LEAVEL_PROVINCE) {
-                    selectedProvince = provinceList.get(position);
-                    queryCities();
-                }else if (currentLevel == LEAVEL_CITY) {
-                    selectedCity = cityList.get(position);
-                    queryCounties();
-                }
-            }
-        });
-        queryProvinces();
     } */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("city_selected", false)) {
+            Intent intent = new Intent(this, WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }*/
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
         titleText = (TextView) findViewById(R.id.title_text);
@@ -92,6 +81,12 @@ public class ChooseAreaActivity extends AppCompatActivity {
                 }else if (currentLevel == LEAVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                }else if (currentLevel == LEAVEL_COUNTY) {
+                    String countyCode = countyList.get(position).getCountyCode();
+                    Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+                    intent.putExtra("county_code", countyCode);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
